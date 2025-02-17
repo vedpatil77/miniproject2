@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .btn {
+            border-radius: 5px;
+            padding: 10px 20px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        }
+
+        .goal-list {
+            margin-top: 20px;
+        }
+
+        .goal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .goal-item:hover {
+            background-color: #e2e6ea;
+        }
+
+        .goal-status {
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #6c757d;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        .footer a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Welcome, {{ user.username }}</h2>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+
+        <h3 class="mt-4">Your Goals</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <ul class="list-unstyled">
+                {% for category, message in messages %}
+                <li class="alert alert-{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Add Goal Form -->
+        <form method="POST" action="{{ url_for('add_goal') }}">
+            <div class="form-group">
+                <label for="goal">New Goal</label>
+                <input type="text" class="form-control" id="goal" name="goal" required placeholder="Enter your new goal">
+            </div>
+            <button type="submit" class="btn btn-success">Add Goal</button>
+        </form>
+
+        <!-- List Goals -->
+        <div class="goal-list mt-4">
+            {% for goal in goals %}
+                <div class="goal-item">
+                    <span>{{ goal.goal }} - <span class="goal-status">{{ goal.status }}</span></span>
+                    <div>
+                        {% if goal.status != "Completed" %}
+                            <a href="{{ url_for('update_goal', goal_id=goal.id) }}" class="btn btn-info btn-sm">Complete</a>
+                        {% endif %}
+                        <a href="{{ url_for('delete_goal', goal_id=goal.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="goal-item">
+                    <span>No goals yet.</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Need help? <a href="#">Contact support</a></p>
+    </div>
+
+    <!-- Scripts for Bootstrap and custom styles -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
